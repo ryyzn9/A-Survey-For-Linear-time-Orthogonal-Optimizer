@@ -896,9 +896,67 @@ ers. Code: <a href="https://github.com/ryyzn9/AuON" target="_blank">github.com/r
   </ol>
 </section>
 
-    <footer>
-      <div>To host this page on GitHub Pages: place this file as <code>index.html</code> in your repo (or in <code>docs/</code>), add the image files into <code>assets/</code>, push to GitHub, then enable Pages in repository settings (or use <code>username.github.io</code> repo). See the short instructions below.</div>
-    </footer>
+   <section id="cite-auon">
+  <h2>Cite this work</h2>
+
+  <p>
+    Maity, Dipan (2025). <strong>AuON: A Survey For Linear-time Orthogonal Optimizer</strong>.
+    Zenodo. DOI: <a href="https://doi.org/10.5281/zenodo.17176620" target="_blank">10.5281/zenodo.17176620</a>
+  </p>
+
+  <div style="margin:12px 0;">
+    <button id="copyBib" style="background:#0d47a1;color:white;border:none;padding:8px 10px;border-radius:6px;cursor:pointer;">
+      Copy BibTeX
+    </button>
+    <span id="copyMsg" style="margin-left:10px;color:#374151;font-size:0.95rem;display:none;">Copied!</span>
+  </div>
+
+  <pre class="code" id="bibtexBlock">
+@misc{maity2025auon,
+  author       = {Maity, Dipan},
+  title        = {AuON: A Survey For Linear-time Orthogonal Optimizer},
+  year         = {2025},
+  publisher    = {Zenodo},
+  doi          = {10.5281/zenodo.17176620},
+  url          = {https://doi.org/10.5281/zenodo.17176620}
+}
+  </pre>
+
+  <h3>Other citation styles</h3>
+  <ul>
+    <li><strong>APA:</strong> Maity, D. (2025). <em>AuON: A Survey For Linear-time Orthogonal Optimizer</em>. Zenodo. https://doi.org/10.5281/zenodo.17176620</li>
+    <li><strong>IEEE:</strong> D. Maity, “AuON: A Survey For Linear-time Orthogonal Optimizer,” Zenodo, 2025. DOI: 10.5281/zenodo.17176620.</li>
+    <li><strong>MLA:</strong> Maity, Dipan. <em>AuON: A Survey For Linear-time Orthogonal Optimizer</em>. Zenodo, 2025, https://doi.org/10.5281/zenodo.17176620.</li>
+  </ul>
+
+  <p style="font-size:0.9rem;color:#6b7280;">
+    Tip: paste the BibTeX into your `references.bib` (or equivalent) and cite with <code>\cite{maity2025auon}</code>.
+  </p>
+
+     
+  <script>
+    (function(){
+      const btn = document.getElementById('copyBib');
+      const bib = document.getElementById('bibtexBlock').innerText.trim();
+      const msg = document.getElementById('copyMsg');
+      btn.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(bib);
+          msg.style.display = 'inline';
+          setTimeout(()=> msg.style.display = 'none', 1600);
+        } catch (e) {
+          // fallback: select the pre block
+          const range = document.createRange();
+          range.selectNode(document.getElementById('bibtexBlock'));
+          const sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(range);
+        }
+      });
+    })();
+  </script>
+</section>
+
   </div>
 
   <!-- Minimal helper script to enable smooth scroll for nav -->
