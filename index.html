@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AuON: A Survey For Linear-time Orthogonal Optimizer — Dipan Maity</title>
+
+  <!-- MathJax for LaTeX rendering -->
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
+
+  <style>
+    :root{
+      --bg:#0f1724; --card:#0b1220; --muted:#9aa4b2; --accent:#7dd3fc; --glass:rgba(255,255,255,0.03);
+      --content-width:900px;
+      color-scheme: dark;
+    }
+    html,body{height:100%;margin:0;background:linear-gradient(180deg,#071026 0%, #071428 100%);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;}
+    .container{max-width:var(--content-width);margin:36px auto;padding:28px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px;box-shadow:0 6px 30px rgba(2,6,23,0.7);} 
+    header{display:flex;gap:16px;align-items:center;margin-bottom:18px}
+    .title{font-size:22px;font-weight:700;color:#e6f6ff}
+    .byline{color:var(--muted);font-size:13px}
+    nav{margin-left:auto}
+    nav a{color:var(--accent);text-decoration:none;font-weight:600}
+
+    .meta{display:flex;gap:12px;align-items:center;margin:8px 0 18px}
+    .section{margin-top:22px}
+    h2{color:#e6f6ff;margin-bottom:8px}
+    p{color:var(--muted);line-height:1.6}
+
+    .abstract{background:var(--glass);padding:14px;border-radius:8px;border:1px solid rgba(125,211,252,0.06)}
+    .figure{margin:14px 0;text-align:center}
+    .figure img{max-width:100%;height:auto;border-radius:8px;border:1px solid rgba(255,255,255,0.03)}
+    table{width:100%;border-collapse:collapse;margin-top:12px;color:var(--muted)}
+    table th, table td{padding:8px 10px;border:1px solid rgba(255,255,255,0.03);text-align:left}
+    .code{background:#020617;padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);overflow:auto;color:#d1f0ff}
+
+    footer{margin-top:30px;color:var(--muted);font-size:13px;text-align:center}
+
+    /* Responsive */
+    @media (max-width:640px){.container{margin:12px;padding:16px} .title{font-size:18px}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <div class="title">AuON: A Survey For Linear-time Orthogonal Optimizer</div>
+        <div class="byline">Dipan Maity — <a href="mailto:dipanai.xyz@gmail.com" style="color:var(--accent)">dipanai.xyz@gmail.com</a></div>
+      </div>
+      <nav><a href="#references">References</a></nav>
+    </header>
+
+    <section class="abstract">
+      <strong>Abstract</strong>
+      <p>Orthogonal gradient updates have recently been proposed as a promising direction for optimization in machine learning. Traditional SVD/QR decomposition is expensive ($O(n^3)$) and may harm momentum; Muon and Newton–Schulz reduce cost to $O(n^2)$ but remain quadratic. We introduce <strong>AuON</strong>, a linear-time optimizer using normalization + hyperbolic-cosine RMS scaling to produce tail-aware, near–semi-orthogonal updates. A Hybrid-AuON (single Newton–Schulz iteration + AuON scaling) is also presented. Code: <a href="https://github.com/ryyzn9/AuON" target="_blank">github.com/ryyzn9/AuON</a>.</p>
+    </section>
+
+    <section class="section" id="introduction">
+      <h2>Introduction</h2>
+      <p>Optimization in deep neural networks is challenged by ill-conditioned gradient and momentum updates. Orthogonalization equalizes directional gains but discards singular-value magnitudes. Muon applies momentum before semi-orthogonalization using Newton–Schulz iterations to reduce complexity. AuON aims for $O(n)$ by using a tail-sensitive global scaling based on <code>\cosh</code> and RMS to bound updates under a spectral-norm trust region.</p>
+
+      <div class="figure">
+        <!-- Put <img src="assets/all2.png"> into your repo under assets/ -->
+        <img src="assets/all2.png" alt="Newton-Schulz vs AuON visualization">
+        <div style="color:var(--muted);font-size:13px;margin-top:6px">Figure: Newton–Schulz process vs AuON (place image at <code>assets/all2.png</code>)</div>
+      </div>
+    </section>
+
+    <section class="section" id="preliminaries">
+      <h2>Preliminaries</h2>
+
+      <h3>Orthogonalization</h3>
+      <p>Given $G=U\Sigma V^\top$, the polar factor $Q=UV^\top$ satisfies $Q^\top Q=I_n$ (if $m\ge n$) and has flat singular spectrum: $\|Q\|_2=1$. This discards singular values but preserves directional subspaces.</p>
+
+      <h3>Semi-orthogonalization</h3>
+      <p>Semi-orthogonalization (used by Muon) applies Newton–Schulz iterations to approximate the polar factor efficiently. AuON instead rescales via a global RMS computed on $\cosh(\cdot)$ to be tail-sensitive while preserving directions.</p>
+    </section>
+
+    <section class="section" id="methods">
+      <h2>Methods</h2>
+
+      <h3>Nonlinear reshaping via hyperbolic cosine RMS scaling</h3>
+      <p>Core transform (notation simplified):</p>
+      <div class="code">
+        \[ \mathrm{update} := \frac{G}{\|G\|_F + 10^{-7}} \\
+        \mathrm{rms} := \frac{\|\cosh(\mathrm{update})\|_F}{\sqrt{N}} \\
+        U := \frac{\mathrm{update}}{\mathrm{rms} + 10^{-8}} \]
+      </div>
+
+      <p>The method preserves sign and per-component ratios of the update while shrinking whole-step magnitude when tails are heavy. See paper for theoretical discussion on near–semi‑orthogonality and consequences.</p>
+
+      <h3>Hybrid-AuON</h3>
+      <p>Apply a single Newton–Schulz iteration followed by the AuON scaling to get many of the semi-orthogonality benefits with much lower cost than multiple Newton–Schulz steps.</p>
+
+      <div class="figure">
+        <img src="assets/auon2.png" alt="Computation efficiency comparison">
+        <div style="color:var(--muted);font-size:13px;margin-top:6px">Figure: computation-efficiency comparison (place image at <code>assets/auon2.png</code>)</div>
+      </div>
+    </section>
+
+    <section class="section" id="experiments">
+      <h2>Experiments</h2>
+      <h3>Language modeling</h3>
+      <p>NanoGPT small configuration on SmolLM-Corpus (500k tokens). Training details and learning rates are shown in the paper.</p>
+
+      <table>
+        <caption style="caption-side:top;text-align:left;color:var(--muted);font-weight:600;margin-bottom:6px">Training Results on Tiny (Run 1)</caption>
+        <thead>
+          <tr><th>Optimizer</th><th>Total Params</th><th>Opt. Params</th><th>Time (s)</th><th>Loss</th><th>Acc</th><th>PPL</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>AuON</td><td>40,901,120</td><td>15,728,640</td><td>1919.2</td><td>0.4305</td><td>0.8667</td><td>1.54</td></tr>
+          <tr><td>AdamW</td><td>40,901,120</td><td>40,901,120</td><td>1918.9</td><td>0.0686</td><td>0.9846</td><td>1.07</td></tr>
+          <tr><td>Hybrid-AuON</td><td>40,901,120</td><td>15,728,640</td><td>2285.4</td><td>0.0422</td><td>0.9908</td><td>1.04</td></tr>
+          <tr><td>MuON</td><td>40,901,120</td><td>15,728,640</td><td>2303.6</td><td>0.0375</td><td>0.9919</td><td>1.04</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Vision task (CIFAR‑10)</h3>
+      <p>Reduced protocol results shown below.</p>
+      <ul style="color:var(--muted)">
+        <li>AdamW: 76.0%</li>
+        <li>AuON: 73.3% (batch size 32)</li>
+        <li>AuON: 76.22% (batch size 128)</li>
+      </ul>
+
+      <div class="figure">
+        <img src="assets/scr.png" alt="Training curves CIFAR-10">
+        <div style="color:var(--muted);font-size:13px;margin-top:6px">Figure: training/validation curves (place image at <code>assets/scr.png</code>)</div>
+      </div>
+    </section>
+
+    <section class="section" id="conclusion">
+      <h2>Conclusion</h2>
+      <p>AuON proposes a linear-time, tail-aware rescaling to obtain near–semi‑orthogonal updates while avoiding expensive matrix iterations. Hybrid-AuON combines one Newton–Schulz step with the AuON scaling for competitive performance at lower cost. Future work: larger-scale experiments (H100), QK-clipping mitigation, and broader evaluation.</p>
+    </section>
+
+    <section class="section" id="references">
+      <h2>References</h2>
+      <ol style="color:var(--muted);">
+        <li>Zhang et al., 2025 — &quot;Adagrad meets Muon: Adaptive...&quot; (reference placeholder)</li>
+        <li>Tuddenham et al., 2022 — &quot;Orthogonalising gradients speed neural...&quot;</li>
+        <li>Jordan et al., 2024 — &quot;Muon optimizer&quot;</li>
+        <li>Lee et al., 2021 — &quot;Von Neumann trace...&quot;</li>
+        <li>Liu et al., 2025 — &quot;Muon scalable LLM training&quot;</li>
+        <li>Peletier, 2023 — &quot;Hyperbolic scaling and optimization&quot;</li>
+        <li>Kimiteam, 2025 — &quot;KIMIK2 open agentic (QK-clipping)&quot;</li>
+      </ol>
+    </section>
+
+    <footer>
+      <div>To host this page on GitHub Pages: place this file as <code>index.html</code> in your repo (or in <code>docs/</code>), add the image files into <code>assets/</code>, push to GitHub, then enable Pages in repository settings (or use <code>username.github.io</code> repo). See the short instructions below.</div>
+    </footer>
+  </div>
+
+  <!-- Minimal helper script to enable smooth scroll for nav -->
+  <script>
+    document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();document.querySelector(a.getAttribute('href')).scrollIntoView({behavior:'smooth'});}));
+  </script>
+</body>
+</html>
