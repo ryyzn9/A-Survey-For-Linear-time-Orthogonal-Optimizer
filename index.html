@@ -4,9 +4,37 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>AuON: A Survey For Linear-time Orthogonal Optimizer — Dipan Maity</title>
+<meta name="description" content="AuON: A linear-time optimizer combining hyperbolic-cosine scaling and normalization to approximate orthogonal updates.">
+<meta name="keywords" content="AuON, orthogonal optimizer, linear-time optimization, neural networks, momentum, spectral norm">
+<meta name="author" content="Dipan Maity">
+    <link rel="canonical" href="https://ryyzn9.github.io/A-Survey-For-Linear-time-Orthogonal-Optimizer/">
+
 
   <!-- MathJax for LaTeX rendering -->
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" defer></script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ScholarlyArticle",
+    "headline": "AuON: A Survey For Linear-time Orthogonal Optimizer",
+    "author": {
+      "@type": "Person",
+      "name": "Dipan Maity"
+    },
+    "datePublished": "2025",
+    "publisher": {
+      "@type": "Organization",
+      "name": "Zenodo"
+    },
+    "url": "https://ryyzn9.github.io/A-Survey-For-Linear-time-Orthogonal-Optimizer/",
+    "identifier": {
+      "@type": "PropertyValue",
+      "propertyID": "DOI",
+      "value": "10.5281/zenodo.17176620"
+    }
+  }
+  </script>
 
  <style>
   :root {
@@ -202,7 +230,7 @@ ers. Code: <a href="https://github.com/ryyzn9/AuON" target="_blank">github.com/r
   </p>
 
   <div class="figure">
-    <img src="assets/all2.png" alt="Visualization of Newton–Schulz process">
+    <img src="assets/all2.png" alt="Visualization of the Newton–Schulz process vs AuON, showing heatmaps over 5 iterations and singular value convergence">>
     <div style="color:#9aa4b2;font-size:14px;margin-top:6px">
       Visualization of the Newton–Schulz process (0.5) over 5 iterations, compared with AuON 
       and Hybrid-AuON. The heatmaps (top) show progressive orthogonalization, with 
